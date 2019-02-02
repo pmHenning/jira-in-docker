@@ -27,7 +27,9 @@ WORKDIR $JIRA_HOME
 CMD ["/entrypoint.sh", "-fg"]
 ENTRYPOINT ["/sbin/tini", "--"]
 
-RUN apk add --no-cache wget curl openssh bash procps openssl perl ttf-dejavu tini libc6-compat
+RUN apt-get update
+RUN apt-get install curl -y
+#RUN apk add --no-cache wget curl openssh bash procps openssl perl ttf-dejavu tini libc6-compat
 
 COPY entrypoint.sh              /entrypoint.sh
 
@@ -44,6 +46,5 @@ RUN mkdir -p                             ${JIRA_INSTALL_DIR} \
     && sed -i -e 's/grep "java version"/grep -E "(openjdk|java) version"/g' ${JIRA_INSTALL_DIR}/bin/check-java.sh \
     && sed -i -e 's/port="8080"/port="8080" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}"/' ${JIRA_INSTALL_DIR}/conf/server.xml \
     && sed -i -e 's/Context path=""/Context path="${catalinaContextPath}"/' ${JIRA_INSTALL_DIR}/conf/server.xml
-RUN apt-get update
 RUN apt-get install libmysql-java
 RUN apt-get upgrade -y
